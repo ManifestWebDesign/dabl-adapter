@@ -17,7 +17,7 @@ class DBPostgresTest extends PHPUnit_Framework_TestCase {
 					'driver' => 'pgsql',
 					'host' => 'localhost',
 					'dbname' => 'test',
-					'user' => 'root',
+					'user' => 'postgres',
 					'password' => ''
 				)
 			);
