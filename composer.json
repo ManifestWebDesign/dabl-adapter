@@ -1,0 +1,21 @@
+{
+	"name": "dabl/adapter",
+	"description": "DABL database adapters",
+	"license": "MIT",
+	"keywords": ["database", "abstraction", "orm", "adapter", "propel", "dabl"],
+	"authors": [
+		{
+			"name": "Manifest Web Design",
+			"email": "dan@manifestwebdesign.com"
+		}
+	],
+	"require": {},
+	"require-dev": {
+		"phpunit/phpunit": "4.8.*"
+	},
+	"autoload": {
+		"psr-4": {
+			"Dabl\\Adapter\\": "src"
+		}
+	}
+}
