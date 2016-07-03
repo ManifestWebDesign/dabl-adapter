@@ -8,6 +8,7 @@ php:
 
 services:
   - mysql
+  - postgresql
 
 before_script:
   - composer self-update
