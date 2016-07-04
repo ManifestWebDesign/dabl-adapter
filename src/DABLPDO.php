@@ -8,6 +8,7 @@
  */
 
 namespace Dabl\Adapter;
+use Dabl\Adapter\Propel\Model\Database;
 use PDO;
 use Exception;
 use RuntimeException;
