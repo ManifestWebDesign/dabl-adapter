@@ -10,7 +10,7 @@ class DABLPDOTest extends PHPUnit_Framework_TestCase {
 	protected $pdoSQLite;
 
 	function setUp() {
-		$this->pdoSQLite = DABLPDO::factory(array(
+		$this->pdoSQLite = DABLPDO::connect(array(
 			'driver' => 'sqlite',
 			'dbname' => ':memory:'
 		));

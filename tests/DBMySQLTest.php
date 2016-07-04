@@ -1,5 +1,6 @@
 <?php
 
+use Dabl\Adapter\DABLPDO;
 use Dabl\Adapter\DBMySQL;
 use Dabl\Adapter\Propel\Model\Database;
 
@@ -10,12 +11,9 @@ class DBMySQLTest extends PHPUnit_Framework_TestCase {
 	 */
 	protected $pdo;
 
-	/**
-	 *
-	 */
 	function setUp() {
 		try {
-			$this->pdo = DBMySQL::factory(array(
+			$this->pdo = DABLPDO::connect(array(
 				'driver' => 'mysql',
 				'host' => 'localhost',
 				'dbname' => 'test',

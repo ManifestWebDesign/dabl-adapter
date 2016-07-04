@@ -1,7 +1,7 @@
 <?php
 
+use Dabl\Adapter\DABLPDO;
 use Dabl\Adapter\DBPostgres;
-use Dabl\Adapter\DBManager;
 
 class DBPostgresTest extends PHPUnit_Framework_TestCase {
 
@@ -12,7 +12,7 @@ class DBPostgresTest extends PHPUnit_Framework_TestCase {
 
 	function setUp() {
 		try {
-			$this->pdo = DBPostgres::factory(
+			$this->pdo = DABLPDO::connect(
 				array(
 					'driver' => 'pgsql',
 					'host' => 'localhost',

@@ -52,11 +52,21 @@ abstract class DABLPDO extends PDO {
 	}
 
 	/**
+	 * @param $connection_params
+	 * @return mixed
+	 * @deprecated
+	 * @see DABLPDO::connect
+	 */
+	static function factory($connection_params) {
+		return self::connect($connection_params);
+	}
+
+	/**
 	 * Creates a new instance of the database adapter associated
 	 * with the specified Creole driver.
 	 *
 	 */
-	static function factory($connection_params) {
+	static function connect($connection_params) {
 		$user = null;
 		$password = null;
 

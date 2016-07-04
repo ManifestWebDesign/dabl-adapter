@@ -1,5 +1,6 @@
 <?php
 
+use Dabl\Adapter\DABLPDO;
 use Dabl\Adapter\DBSQLite;
 
 class DBSQLiteTest extends PHPUnit_Framework_TestCase {
@@ -10,7 +11,7 @@ class DBSQLiteTest extends PHPUnit_Framework_TestCase {
 	protected $pdo;
 
 	function setUp() {
-		$this->pdo = DBSQLite::factory(array(
+		$this->pdo = DABLPDO::connect(array(
 			'driver' => 'sqlite',
 			'dbname' => ':memory:'
 		));
