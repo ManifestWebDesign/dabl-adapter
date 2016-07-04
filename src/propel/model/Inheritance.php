@@ -9,6 +9,8 @@
  */
 
 namespace Dabl\Adapter\Propel\Model;
+use DOMDocument;
+use DOMNode;
 
 /**
  * A Class for information regarding possible objects representing a table

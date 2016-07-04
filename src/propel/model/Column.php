@@ -9,6 +9,8 @@
  */
 
 namespace Dabl\Adapter\Propel\Model;
+use DOMDocument;
+use DOMNode;
 
 /**
  * A Class for holding data about a column used in an Application.

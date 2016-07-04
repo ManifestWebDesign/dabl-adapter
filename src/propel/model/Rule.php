@@ -9,6 +9,8 @@
  */
 
 namespace Dabl\Adapter\Propel\Model;
+use DOMDocument;
+use DOMNode;
 
 /**
  * Data about a validation rule used in an application.

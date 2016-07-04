@@ -9,6 +9,8 @@
  */
 
 namespace Dabl\Adapter\Propel\Model;
+use DOMDocument;
+use DOMNode;
 
 /**
  * Data about a table used in an application.

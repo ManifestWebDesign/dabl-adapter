@@ -9,6 +9,8 @@
  */
 
 namespace Dabl\Adapter\Propel\Model;
+use DOMDocument;
+use DOMNode;
 
 /**
  * Information related to an ID method.
