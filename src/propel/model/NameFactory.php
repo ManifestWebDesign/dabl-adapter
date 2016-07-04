@@ -24,12 +24,12 @@ class NameFactory
 	/**
 	 * The class name of the PHP name generator.
 	 */
-	const PHP_GENERATOR = 'PhpNameGenerator';
+	const PHP_GENERATOR = 'Dabl\\Adapter\\Propel\\Model\\PhpNameGenerator';
 
 	/**
 	 * The fully qualified class name of the constraint name generator.
 	 */
-	const CONSTRAINT_GENERATOR = 'ConstraintNameGenerator';
+	const CONSTRAINT_GENERATOR = 'Dabl\\Adapter\\Propel\\Model\\ConstraintNameGenerator';
 
 	/**
 	 * The single instance of this class.
