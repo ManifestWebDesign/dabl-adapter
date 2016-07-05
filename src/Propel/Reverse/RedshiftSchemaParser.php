@@ -449,6 +449,7 @@ class RedshiftSchemaParser extends BaseSchemaParser
 	 */
 	protected function addIndexes(Table $table, $oid, $version)
 	{
+		return;
 		$stmt = $this->dbh->prepare("SELECT
 										DISTINCT ON(cls.relname)
 										cls.relname as idxname,
@@ -503,7 +504,7 @@ class RedshiftSchemaParser extends BaseSchemaParser
 	 */
 	protected function addPrimaryKey(Table $table, $oid, $version)
 	{
-
+		return;
 		$stmt = $this->dbh->prepare("SELECT
 										DISTINCT ON(cls.relname)
 										cls.relname as idxname,
