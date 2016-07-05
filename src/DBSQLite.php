@@ -154,7 +154,7 @@ class DBSQLite extends DABLPDO {
 	/**
 	 * @return Database
 	 */
-	function getDatabaseSchema(){
+	function getDatabaseSchema() {
 		$parser = new SqliteSchemaParser($this);
 		$database = new Database($this->getDBName());
 		$database->setPlatform(new SqlitePlatform($this));
