@@ -9,6 +9,7 @@
  */
 
 namespace Dabl\Adapter\Propel\Reverse;
+use Dabl\Adapter\Propel\Exception\EngineException;
 use Dabl\Adapter\Propel\Model\Column;
 use Dabl\Adapter\Propel\Model\ColumnDefaultValue;
 use Dabl\Adapter\Propel\Model\Database;
@@ -127,7 +128,7 @@ class PgsqlSchemaParser extends BaseSchemaParser
 			$database->addTable($table);
 
 			// Create a wrapper to hold these tables and their associated OID
-			$wrap = new stdClass;
+			$wrap = new \stdClass;
 			$wrap->table = $table;
 			$wrap->oid = $oid;
 			$tableWraps[] = $wrap;
@@ -563,7 +564,7 @@ class PgsqlSchemaParser extends BaseSchemaParser
 
 		while ($row = pg_fetch_assoc($result)) {
 			// FIXME -- decide what info we need for sequences & then create a SequenceInfo object (if needed)
-			$obj = new stdClass;
+			$obj = new \stdClass;
 			$obj->name = $row['relname'];
 			$obj->oid = $row['oid'];
 			$this->sequences[strtoupper($row['relname'])] = $obj;

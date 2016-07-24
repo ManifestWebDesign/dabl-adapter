@@ -9,6 +9,7 @@
  */
 
 namespace Dabl\Adapter\Propel\Model;
+use Dabl\Adapter\Propel\Exception\EngineException;
 use DOMDocument;
 use DOMNode;
 
@@ -237,7 +238,7 @@ class Column extends XMLElement
 			// use boleanValue()
 
 			$this->description = $this->getAttribute("description");
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			throw new EngineException("Error setting up column " . var_export($this->getAttribute("name"), true) . ": " . $e->getMessage());
 		}
 	}

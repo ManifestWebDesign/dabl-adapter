@@ -9,6 +9,7 @@
  */
 
 namespace Dabl\Adapter\Propel\Model;
+use Dabl\Adapter\Propel\Exception\EngineException;
 
 /**
  * A <code>NameGenerator</code> implementation for table-specific

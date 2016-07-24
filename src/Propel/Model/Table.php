@@ -9,6 +9,7 @@
  */
 
 namespace Dabl\Adapter\Propel\Model;
+use Dabl\Adapter\Propel\Exception\EngineException;
 use DOMDocument;
 use DOMNode;
 
