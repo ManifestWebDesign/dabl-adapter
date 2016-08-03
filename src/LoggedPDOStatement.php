@@ -11,7 +11,7 @@ namespace Dabl\Adapter;
 
 use PDOStatement;
 
-class LoggedPDOStatement extends PDOStatement{
+class LoggedPDOStatement extends PDOStatement {
 
 	/**
 	 * @var DABLPDO
@@ -20,16 +20,16 @@ class LoggedPDOStatement extends PDOStatement{
 
 	protected function __construct(DABLPDO $conn) {
 		$this->setConnection($conn);
-    }
+	}
 
-  	function setConnection(DABLPDO $conn){
+	function setConnection(DABLPDO $conn) {
 		$this->_connection = $conn;
 	}
 
 	/**
 	 * @return DABLPDO
 	 */
-	function getConnection(){
+	function getConnection() {
 		return $this->_connection;
 	}
 
