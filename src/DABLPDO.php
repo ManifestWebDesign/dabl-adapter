@@ -386,7 +386,7 @@ abstract class DABLPDO extends PDO {
 					'count' => 0,
 					'time' => 0.0,
 				);
-		}
+			}
 			++$queries[$hash]['traces'][$trace_hash]['count'];
 			$queries[$hash]['traces'][$trace_hash]['time'] += $query_array['time'];
 		}
