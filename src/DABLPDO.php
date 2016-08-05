@@ -8,6 +8,7 @@
  */
 
 namespace Dabl\Adapter;
+
 use Dabl\Adapter\Propel\Model\Database;
 use PDO;
 use Exception;
@@ -16,13 +17,15 @@ use PDOStatement;
 use DateTimeZone;
 
 abstract class DABLPDO extends PDO {
+
 	const ID_METHOD_NONE = 0;
 	const ID_METHOD_AUTOINCREMENT = 1;
 	const ID_METHOD_SEQUENCE = 2;
 
 	public $queryLog = array();
-	public $logQueries = false;
-	public $printQueries = false;
+	public static $logQueries = false;
+	public static $printQueries = false;
+
 	protected $dbName = null;
 	protected $driver = null;
 
@@ -38,8 +41,11 @@ abstract class DABLPDO extends PDO {
 		$trace = '';
 		$backtrace = debug_backtrace();
 		array_shift($backtrace);
-		foreach ($backtrace as &$block)
+
+		foreach ($backtrace as &$block) {
 			$trace .= @ $block['file'] . ' (line ' . @$block['line'] . ') ' . @$block['class'] . @$block['type'] . @$block['function'] . '()<br />';
+		}
+
 		$this->queryLog[] = array(
 			'query' => $query_string,
 			'time' => $time,
@@ -48,8 +54,9 @@ abstract class DABLPDO extends PDO {
 	}
 
 	function __destruct() {
-		if ($this->logQueries)
+		if (self::$logQueries) {
 			$this->printQueryLog();
+		}
 	}
 
 	/**
@@ -298,8 +305,9 @@ abstract class DABLPDO extends PDO {
 	function __construct() {
 		$args = func_get_args();
 		$result = call_user_func_array(array('parent', '__construct'), $args);
-		if ($this->logQueries || $this->printQueries)
-			$this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('LoggedPDOStatement', array($this)));
+		if (self::$logQueries || self::$printQueries) {
+			$this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array(__NAMESPACE__ . '\\LoggedPDOStatement', array($this)));
+		}
 		return $result;
 	}
 
@@ -319,7 +327,7 @@ abstract class DABLPDO extends PDO {
 	function query($statement, $fetch_mode = null, $mixed = null, array $ctorargs = null) {
 		$args = func_get_args();
 
-		if ($this->logQueries) {
+		if (self::$logQueries) {
 			$start = microtime(true);
 			$result = call_user_func_array(array('parent', 'query'), $args);
 			$time = microtime(true) - $start;
@@ -327,7 +335,7 @@ abstract class DABLPDO extends PDO {
 			return $result;
 		}
 
-		if ($this->printQueries) {
+		if (self::$printQueries) {
 			$this->printQuery((string) $statement);
 		}
 
@@ -341,14 +349,14 @@ abstract class DABLPDO extends PDO {
 	 */
 	function exec($statement) {
 
-		if ($this->logQueries) {
+		if (self::$logQueries) {
 			$start = microtime(true);
 			$result = parent::exec($statement);
 			$time = microtime(true) - $start;
 			$this->logQuery((string) $statement, $time);
 			return $result;
 		}
-		if ($this->printQueries) {
+		if (self::$printQueries) {
 			$this->printQuery((string) $statement);
 		}
 
@@ -362,7 +370,7 @@ abstract class DABLPDO extends PDO {
 	function printQueryLog() {
 		$total_time = 0.00;
 		$total_count = 0;
-		$string = '<div style="padding: 10px"><table width="100%" border="1" bordercolor="#bbb" style="clear:both;margin:auto;white-space:pre-line;font-size:11px;font-family:monospace" cellpadding="1" cellspacing="0">';
+		$string = '<div style="padding: 10px; background: #fff"><table width="100%" border="1" bordercolor="#bbb" style="clear:both;margin:auto;white-space:pre-line;font-size:11px;font-family:monospace" cellpadding="1" cellspacing="0">';
 		$string .= '<thead style="background-color: #eee"><tr><th>Query</th><th>Count</th><th>Time (Seconds)</th><th>Traces</th></tr></thead><tbody>';
 		$queries = array();
 		foreach ($this->queryLog as $num => &$query_array) {
@@ -437,8 +445,9 @@ abstract class DABLPDO extends PDO {
 	 * @see		setCharset()
 	 */
 	function initConnection(array $settings) {
-		if (isset($settings['charset']['value']))
+		if (isset($settings['charset']['value'])) {
 			$this->setCharset($settings['charset']['value']);
+		}
 		if (isset($settings['queries']) && is_array($settings['queries'])) {
 			foreach ($settings['queries'] as &$queries) {
 				foreach ((array) $queries as $query) {
@@ -710,4 +719,5 @@ abstract class DABLPDO extends PDO {
 	 * @return Database
 	 */
 	abstract function getDatabaseSchema();
+
 }
