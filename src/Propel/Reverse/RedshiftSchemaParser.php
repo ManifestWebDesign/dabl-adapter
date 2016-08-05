@@ -100,14 +100,17 @@ class RedshiftSchemaParser extends BaseSchemaParser
 		// Clean up
 		$stmt = null;
 
-		$stmt = $this->dbh->query("SELECT c.oid,
-								    c.relname, n.nspname
-								    FROM pg_class c join pg_namespace n on (c.relnamespace=n.oid)
-								    WHERE c.relkind = 'r'
-								      AND n.nspname NOT IN ('information_schema','pg_catalog')
-								      AND n.nspname NOT LIKE 'pg_temp%'
-								      AND n.nspname NOT LIKE 'pg_toast%'
-								    ORDER BY relname");
+		$stmt = $this->dbh->query("SELECT
+				c.oid,
+				c.relname,
+				n.nspname
+			FROM pg_class c
+			JOIN pg_namespace n ON (c.relnamespace = n.oid)
+			WHERE c.relkind IN ('r', 'm', 'v')
+				AND n.nspname NOT IN ('information_schema', 'pg_catalog')
+				AND n.nspname NOT LIKE 'pg_temp%'
+				AND n.nspname NOT LIKE 'pg_toast%'
+			ORDER BY relname");
 
 		$tableWraps = array();
 
