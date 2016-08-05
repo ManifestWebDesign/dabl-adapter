@@ -36,13 +36,13 @@ class LoggedPDOStatement extends PDOStatement {
 	function execute($bound_input_params = null) {
 		$conn = $this->_connection;
 
-		if ($conn->printQueries) {
+		if (DABLPDO::$printQueries) {
 			$conn->printQuery($this->queryString);
 		}
 
 		$args = func_get_args();
 
-		if ($conn->logQueries) {
+		if (DABLPDO::$logQueries) {
 			$start = microtime(true);
 			$result = call_user_func_array(array('parent', 'execute'), $args);
 			$time = microtime(true) - $start;
