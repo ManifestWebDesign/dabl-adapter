@@ -170,12 +170,25 @@ abstract class DABLPDO extends PDO {
 
 			case 'oracle':
 			case 'oci':
-				if (!empty($connection_params['dbname'])) {
+				if (!empty($connection_params['host'])) {
+					$dbname = 'dbname=//' . $connection_params['host'];
+
+					if (!empty($connection_params['port'])) {
+						$dbname .= ':' . $connection_params['port'];
+					}
+
+					if (!empty($connection_params['dbname'])) {
+						$dbname .= '/' . $connection_params['dbname'];
+					}
+					$parts[] = $dbname;
+				} elseif (!empty($connection_params['dbname'])) {
 					$parts[] = 'dbname=' . $connection_params['dbname'];
 				}
+
 				if (!empty($connection_params['charset'])) {
 					$parts[] = 'charset=' . $connection_params['charset'];
 				}
+
 				foreach ($parts as &$v) {
 					$v = str_replace(';', '\;', $v);
 				}
