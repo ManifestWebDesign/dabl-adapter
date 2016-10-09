@@ -21,7 +21,7 @@ class DBOracle extends DABLPDO {
 	 * @return string
 	 */
 	function hourStart($date) {
-		throw new RuntimeException('Not implemented!');
+		return 'TRUNC(' . $date . ', \'HH\')';
 	}
 
 	/**
@@ -31,7 +31,7 @@ class DBOracle extends DABLPDO {
 	 * @return string
 	 */
 	function dayStart($date) {
-		throw new RuntimeException('Not implemented!');
+		return 'TO_DATE(' . $date . ')';
 	}
 
 	/**
@@ -41,7 +41,7 @@ class DBOracle extends DABLPDO {
 	 * @return string
 	 */
 	function weekStart($date) {
-		throw new RuntimeException('Not implemented!');
+		return 'TRUNC(' . $date . ', \'DY\')';
 	}
 
 	/**
@@ -51,7 +51,7 @@ class DBOracle extends DABLPDO {
 	 * @return string
 	 */
 	function monthStart($date) {
-		throw new RuntimeException('Not implemented!');
+		return 'TRUNC(' . $date . ', \'MONTH\')';
 	}
 
 	/**
