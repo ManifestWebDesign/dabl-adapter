@@ -36,6 +36,7 @@ class MssqlSchemaParser extends BaseSchemaParser
 		"binary" => PropelTypes::BINARY,
 		"bit" => PropelTypes::BOOLEAN,
 		"char" => PropelTypes::CHAR,
+		"date" => PropelTypes::DATE,
 		"datetime" => PropelTypes::TIMESTAMP,
 		"decimal() identity"  => PropelTypes::DECIMAL,
 		"decimal"  => PropelTypes::DECIMAL,
@@ -66,15 +67,15 @@ class MssqlSchemaParser extends BaseSchemaParser
 		"varchar" => PropelTypes::VARCHAR,
 		"varchar(max)" => PropelTypes::CLOB,
 		"uniqueidentifier" => PropelTypes::CHAR,
-	// SQL Server 2000 only
+		// SQL Server 2000 only
 		"bigint identity" => PropelTypes::BIGINT,
 		"bigint" => PropelTypes::BIGINT,
 		"sql_variant" => PropelTypes::VARCHAR,
 	);
 
-  /**
-   * @see        BaseSchemaParser::getTypeMapping()
-   */
+	/**
+	 * @see        BaseSchemaParser::getTypeMapping()
+	 */
 	protected function getTypeMapping()
 	{
 		return self::$mssqlTypeMap;
@@ -136,6 +137,8 @@ class MssqlSchemaParser extends BaseSchemaParser
 			if (
 				strtolower($type) == 'int identity'
 				|| strtolower($type) == 'bigint identity'
+				|| strpos(strtolower($default), 'newid') !== false
+				|| strpos(strtolower($default), 'newsequentialid') !== false
 			) {
 				$autoincrement = true;
 			}
@@ -173,7 +176,7 @@ class MssqlSchemaParser extends BaseSchemaParser
 		$stmt = $this->dbh->query("SELECT ccu1.TABLE_NAME, ccu1.COLUMN_NAME, ccu2.TABLE_NAME AS FK_TABLE_NAME, ccu2.COLUMN_NAME AS FK_COLUMN_NAME, ccu2.CONSTRAINT_NAME AS FK_NAME
 									FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu1 INNER JOIN
 											INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc1 ON tc1.CONSTRAINT_NAME = ccu1.CONSTRAINT_NAME AND
-											CONSTRAINT_TYPE = 'Foreign Key' INNER JOIN
+											UPPER (CONSTRAINT_TYPE) = 'FOREIGN KEY' INNER JOIN
 											INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc1 ON rc1.CONSTRAINT_NAME = tc1.CONSTRAINT_NAME INNER JOIN
 											INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu2 ON ccu2.CONSTRAINT_NAME = rc1.UNIQUE_CONSTRAINT_NAME
 									WHERE (ccu1.table_name = '".$table->getName()."')");
@@ -228,6 +231,8 @@ class MssqlSchemaParser extends BaseSchemaParser
 
 	/**
 	 * Loads the primary key for this table.
+	 * Gah! This used to grab all columns that are identities, ignoring the fact that they could possibly not
+	 * be primary keys. Just chop that part of the query out and poof, it works. Gah!!!
 	 */
 	protected function addPrimaryKey(Table $table)
 	{
@@ -237,12 +242,6 @@ class MssqlSchemaParser extends BaseSchemaParser
 						INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME = INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.constraint_name
 						WHERE     (INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_TYPE = 'PRIMARY KEY') AND
 						(INFORMATION_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = '".$table->getName()."')
-UNION ALL
-SELECT COLUMN_NAME
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE
-(TABLE_NAME = '".$table->getName()."')
-AND columnproperty(object_id(TABLE_SCHEMA + '.' + TABLE_NAME), COLUMN_NAME, 'IsIdentity') = 1
 ";
 		$stmt = $this->dbh->query($q);
 
