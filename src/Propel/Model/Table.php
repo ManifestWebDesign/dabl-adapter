@@ -1434,6 +1434,7 @@ class Table extends ScopedElement implements IDMethod
 	 */
 	public function getColumns()
 	{
+		asort($this->columnList);
 		return $this->columnList;
 	}
 
