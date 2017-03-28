@@ -247,7 +247,12 @@ abstract class DABLPDO extends PDO {
 
 			case 'sqlsrv':
 				if (!empty($connection_params['host'])) {
-					$parts[] = 'server=' . $connection_params['host'];
+					$host = 'server=' . $connection_params['host'];
+					if (!empty($connection_params['port'])) {
+						$host .= ',' . $connection_params['port'];
+					}
+					$parts[] = $host;
+
 				}
 				if (!empty($connection_params['dbname'])) {
 					$parts[] = 'database=' . $connection_params['dbname'];
