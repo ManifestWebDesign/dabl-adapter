@@ -259,98 +259,21 @@ class DBMSSQL extends DABLPDO {
 			return;
 		}
 
-		//get the ORDER BY clause if present
-		$orderStatement = stristr($fromStatement, 'ORDER BY');
-		$orders = '';
+		// get the ORDER BY clause if present
+		$orderStatement = stristr($sql, 'ORDER BY');
 
-		if ($orderStatement !== false) {
-			//remove order statement from the from statement
-			$fromStatement = trim(str_replace($orderStatement, '', $fromStatement));
-
-			$order = str_ireplace('ORDER BY', '', $orderStatement);
-			$orders = explode(',', $order);
-
-			for ($i = 0; $i < count($orders); $i++) {
-				$orderArr[trim(preg_replace('/\s+(ASC|DESC)$/i', '', $orders[$i]))] = array(
-					'sort' => (stripos($orders[$i], ' DESC') !== false) ? 'DESC' : 'ASC',
-					'key' => $i
-				);
-			}
+		if ($orderStatement === false) {
+			$sql = "$sql ORDER BY (SELECT 1)";
 		}
 
-		//setup inner and outer select selects
-		$innerSelect = '';
-		$outerSelect = '';
-		foreach (explode(', ', $selectStatement) as $selCol) {
-			$selColArr = explode(' ', $selCol);
-			$selColCount = count($selColArr) - 1;
-
-			//make sure the current column isn't * or an aggregate
-			if (strpos($selColArr[0], '*') === false && !strstr($selColArr[0], '(')) {
-				if (isset($orderArr[$selColArr[0]])) {
-					$orders[$orderArr[$selColArr[0]]['key']] = $selColArr[0] . ' ' . $orderArr[$selColArr[0]]['sort'];
-				}
-
-				//use the alias if one was present otherwise use the column name
-				$alias = (!stristr($selCol, ' AS ')) ? $selColArr[0] : $selColArr[$selColCount];
-				//don't quote the identifier if it is already quoted
-				if ($alias[0] != '[') {
-					$alias = $this->quoteIdentifier($alias, true);
-				}
-
-				//save the first non-aggregate column for use in ROW_NUMBER() if required
-				if (!isset($firstColumnOrderStatement)) {
-					$firstColumnOrderStatement = 'ORDER BY ' . $selColArr[0];
-				}
-
-				//add an alias to the inner select so all columns will be unique
-				$innerSelect .= $selColArr[0] . ' AS ' . $alias . ', ';
-				$outerSelect .= $alias . ', ';
-			} elseif(stristr($selCol, ' AS ')) {
-				//agregate columns must always have an alias clause
-				if (!stristr($selCol, ' AS ')) {
-					throw new RuntimeException('MssqlAdapter::applyLimit() requires aggregate columns to have an Alias clause');
-				}
-
-				//aggregate column alias can't be used as the count column you must use the entire aggregate statement
-				if (isset($orderArr[$selColArr[$selColCount]])) {
-					$orders[$orderArr[$selColArr[$selColCount]]['key']] = str_replace($selColArr[$selColCount - 1] . ' ' . $selColArr[$selColCount], '', $selCol) . $orderArr[$selColArr[$selColCount]]['sort'];
-				}
-
-				//quote the alias
-				$alias = $selColArr[$selColCount];
-				//don't quote the identifier if it is already quoted
-				if ($alias[0] != '[') {
-					$alias = $this->quoteIdentifier($alias, true);
-				}
-
-				$innerSelect .= str_replace($selColArr[$selColCount], $alias, $selCol) . ', ';
-				$outerSelect .= $alias . ', ';
-			} else {
-				$orders[] = '(select 1)';
-				$innerSelect .= $selColArr[0] . '  ';
-				$outerSelect .= '*  ';
-			}
+		if ($offset != 0) {
+			$sql = "$sql OFFSET $offset ROWS";
 		}
 
-		if (is_array($orders)) {
-			$orderStatement = 'ORDER BY ' . implode(', ', $orders);
-		} else {
-			//use the first non aggregate column in our select statement if no ORDER BY clause present
-			if (isset($firstColumnOrderStatement)) {
-				$orderStatement = $firstColumnOrderStatement;
-			} else {
-				throw new RuntimeException('MssqlAdapter::applyLimit() unable to find column to use with ROW_NUMBER()');
-			}
+		if ($limit != 0) {
+			$sql = "$sql FETCH NEXT $limit ROWS ONLY";
 		}
 
-		//substring the select strings to get rid of the last comma and add our FROM and SELECT clauses
-		$innerSelect = $selectText . 'ROW_NUMBER() OVER(' . $orderStatement . ') AS [RowNumber], ' . substr($innerSelect, 0, - 2) . ' FROM';
-		//outer select can't use * because of the RowNumber column
-		$outerSelect = 'SELECT ' . substr($outerSelect, 0, - 2) . ' FROM';
-
-		//ROW_NUMBER() starts at 1 not 0
-		$sql = $outerSelect . ' (' . $innerSelect . ' ' . $fromStatement . ') AS derivedb WHERE RowNumber BETWEEN ' . ($offset + 1) . ' AND ' . ($limit + $offset);
 	}
 
 	/**
