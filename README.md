@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ManifestWebDesign/dabl-adapter.svg?branch=master)](https://travis-ci.org/ManifestWebDesign/dabl-adapter)
+
 # DABL Adapter
 Subclasses of PHP PDO for various SQL dialects
 
