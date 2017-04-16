@@ -738,4 +738,22 @@ abstract class DABLPDO extends PDO {
 	 */
 	abstract function getDatabaseSchema();
 
+	/**
+	 * Runs the given callable in a transaction.  If the callback throws, automatically rollback the transaction and rethrow.
+	 * If the callback doesn't throw, commit the transaction.
+	 *
+	 * @param callable $callable
+	 * @throws Exception
+	 */
+	function transact(callable $callable) {
+		$this->beginTransaction();
+		try {
+			call_user_func($callable);
+			$this->commit();
+		} catch (Exception $e) {
+			$this->rollBack();
+			throw $e;
+		}
+	}
+
 }

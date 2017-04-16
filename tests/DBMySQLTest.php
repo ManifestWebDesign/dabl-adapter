@@ -96,6 +96,28 @@ class DBMySQLTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * @covers DBMySQL::transact
+	 */
+	function testCallbackInTransact() {
+		$this->assertEquals(0, $this->pdo->getTransactionDepth());
+		$this->pdo->transact(function() {
+			$this->assertEquals(1, $this->pdo->getTransactionDepth());
+		});
+		$this->assertEquals(0, $this->pdo->getTransactionDepth());
+	}
+
+	/**
+	 * @covers DBMySQL::transact
+	 * @expectedException RuntimeException
+	 * @expectedExceptionMessage Foobar
+	 */
+	function testExceptionInCallbackInTransact() {
+		$this->pdo->transact(function() {
+			throw new RuntimeException('Foobar');
+		});
+	}
+
+	/**
 	 * @group NestedTransaction
 	 * @group bug1355
 	 * @covers DBMySQL::beginTransaction
